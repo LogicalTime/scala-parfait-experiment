@@ -5,25 +5,30 @@ import mvb.wip.parfait.backyard._
 /**
  * Created by Mark on 9/4/2015.
  */
-trait HouseSystemBP extends HouseBP with BackYardBP
+trait HouseSystemBP{ def houseSystem: HouseSystem}
 
-object TownHouseSystemBPImpl extends HouseSystemBP
+trait HouseSystem extends HouseBP with BackYardBP
+
+object TownHouseSystemImpl extends HouseSystem
 with TownhouseBPImpl
 with GreenBackYardBPImpl
 with GardenBPImpl
 
-object SugarShackHouseSystemBPImpl extends HouseSystemBP
+object SugarShackHouseSystemImpl extends HouseSystem
 with SugarShackBPImpl
 with BlueBackYardBPImpl
 with PondBPImpl
 
-class DoItAll( houseSystemBP: HouseSystemBP){
-  houseSystemBP.house.visit()
+object HouseSystemEnrichments{
+  implicit class RichHouseSystem(val houseSystem: HouseSystem) extends AnyVal{
+    def doItAll() = houseSystem.house.visit()
+  }
 }
 
 object HouseSystemApp extends App{
+  import HouseSystemEnrichments._
 
-  new DoItAll(TownHouseSystemBPImpl)
-  new DoItAll(SugarShackHouseSystemBPImpl)
+  TownHouseSystemImpl.doItAll()
+  SugarShackHouseSystemImpl.doItAll()
 
 }
